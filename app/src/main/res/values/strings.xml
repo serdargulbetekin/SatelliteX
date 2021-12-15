@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SatelliteX</string>
+    <string name="empty_list_message">Gösterilecek uydu bulunumadı…</string>
+    <string name="general_error_message">Bir hata oluştu. Lütfen tekrar deneyiniz.</string>
+    <string name="image_view_status_contentDesc">Uydu Durum İkonu</string>
+    <string name="active">Aktif</string>
+    <string name="passive">Pasif</string>
+</resources>

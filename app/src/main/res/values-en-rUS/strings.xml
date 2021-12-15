@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SatelliteX</string>
+    <string name="empty_list_message">No satellite to show…</string>
+    <string name="general_error_message">Something went wrong. Please try agn later.</string>
+    <string name="image_view_status_contentDesc">Satellite Status Icon</string>
+    <string name="active">Active</string>
+    <string name="passive">Passive</string>
+</resources>
