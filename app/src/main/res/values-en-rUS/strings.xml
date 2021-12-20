@@ -6,4 +6,8 @@
     <string name="image_view_status_contentDesc">Satellite Status Icon</string>
     <string name="active">Active</string>
     <string name="passive">Passive</string>
+    <string name="id_not_found">We are unable to show the details. Please try again later.</string>
+    <string name="height_mass">"Height/Mass: "</string>
+    <string name="cost">"Cost: %s"</string>
+    <string name="last_position">"Last Position: %s"</string>
 </resources>

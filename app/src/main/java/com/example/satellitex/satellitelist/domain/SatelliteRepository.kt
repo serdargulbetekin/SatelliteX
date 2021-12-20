@@ -1,4 +1,4 @@
-package com.example.satellitex.satellitelist
+package com.example.satellitex.satellitelist.domain
 
 import android.content.Context
 import android.util.Log

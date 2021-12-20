@@ -1,4 +1,4 @@
-package com.example.satellitex.satellitelist
+package com.example.satellitex.satellitelist.presentation
 
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.config.showToast
 import com.example.satellitex.databinding.ActivitySatelliteListBinding
 import com.example.satellitex.room.Satellite
+import com.example.satellitex.satellitedetail.presentation.SatelliteDetailActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -43,7 +44,6 @@ class SatelliteListActivity : AppCompatActivity() {
     }
 
     private fun onSatelliteItemClick(satellite: Satellite) {
-
+        startActivity(SatelliteDetailActivity.createIntent(this, satellite.id, satellite.name))
     }
-
 }

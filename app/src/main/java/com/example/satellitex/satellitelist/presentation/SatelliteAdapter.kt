@@ -1,4 +1,4 @@
-package com.example.satellitex.satellitelist
+package com.example.satellitex.satellitelist.presentation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -39,7 +39,11 @@ class SatelliteAdapter(private val onItemClickListener: (Satellite) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: SatelliteViewHolder, position: Int) {
-        holder.onBindItem(differ.currentList[position], differ.currentList.size - 1 == position)
+        holder.onBindItem(
+            differ.currentList[position],
+            differ.currentList.size - 1 == position,
+            onItemClickListener
+        )
     }
 
     override fun getItemCount() = differ.currentList.size
@@ -47,7 +51,11 @@ class SatelliteAdapter(private val onItemClickListener: (Satellite) -> Unit) :
     inner class SatelliteViewHolder(private val binding: RowSatelliteBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun onBindItem(satellite: Satellite, isLastItem: Boolean) {
+        fun onBindItem(
+            satellite: Satellite,
+            isLastItem: Boolean,
+            onItemClickListener: (Satellite) -> Unit
+        ) {
             with(binding) {
                 textViewName.text = satellite.name
                 if (satellite.active) {
@@ -70,6 +78,7 @@ class SatelliteAdapter(private val onItemClickListener: (Satellite) -> Unit) :
                     imageViewStatus.setImageResource(R.drawable.ic_passive)
                 }
                 viewDivider.setVisibility(isLastItem.not())
+                root.setOnClickListener { onItemClickListener.invoke(satellite) }
             }
         }
     }

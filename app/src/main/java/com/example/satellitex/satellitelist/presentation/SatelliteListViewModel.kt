@@ -1,14 +1,15 @@
-package com.example.satellitex.satellitelist
+package com.example.satellitex.satellitelist.presentation
 
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.config.StringProvider
 import com.example.config.optMessage
+import com.example.constants.Constants
 import com.example.satellitex.R
 import com.example.satellitex.room.Satellite
+import com.example.satellitex.satellitelist.domain.SatelliteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -36,23 +37,19 @@ class SatelliteListViewModel @Inject constructor(
 
     @SuppressLint("CheckResult")
     private fun loadData() {
-        _progress.postValue(PROGRESS_VISIBLE)
+        _progress.postValue(Constants.PROGRESS_VISIBLE)
         satelliteRepository.loadData()
             .subscribe({
-                _progress.postValue(PROGRESS_GONE)
+                _progress.postValue(Constants.PROGRESS_GONE)
                 if (it.isNotEmpty()) {
                     _satelliteList.postValue(it)
                 } else {
                     _errorMessage.postValue(stringProvider.getString(R.string.empty_list_message))
                 }
             }, {
-                _progress.postValue(PROGRESS_GONE)
+                _progress.postValue(Constants.PROGRESS_GONE)
                 _errorMessage.postValue(it.optMessage(stringProvider))
             })
     }
 
-    companion object {
-        private const val PROGRESS_VISIBLE = 0
-        private const val PROGRESS_GONE = 8
-    }
 }

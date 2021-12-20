@@ -1,4 +1,4 @@
-package com.example.satellitex.model
+package com.example.satellitex.satellitedetail.data
 
 data class SatelliteDetail(
     val id: Int,
