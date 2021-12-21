@@ -9,4 +9,5 @@
     <string name="height_mass">"Boy/Kütle: %s"</string>
     <string name="cost">"Tutar: %s"</string>
     <string name="last_position">"Son Pozisyon: %s"</string>
+    <string name="search">Ara…</string>
 </resources>

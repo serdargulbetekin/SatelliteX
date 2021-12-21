@@ -3,6 +3,7 @@ package com.example.satellitex.satellitelist.presentation
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import com.example.config.showToast
 import com.example.satellitex.databinding.ActivitySatelliteListBinding
 import com.example.satellitex.room.Satellite
@@ -29,6 +30,9 @@ class SatelliteListActivity : AppCompatActivity() {
         setContentView(viewBinding.root)
         viewBinding.apply {
             recyclerView.adapter = satelliteAdapter
+            editTextSearch.addTextChangedListener {
+                satelliteAdapter.filter.filter(it.toString())
+            }
             viewModel.apply {
                 satelliteList.observe(this@SatelliteListActivity, {
                     satelliteAdapter.submitList(it)

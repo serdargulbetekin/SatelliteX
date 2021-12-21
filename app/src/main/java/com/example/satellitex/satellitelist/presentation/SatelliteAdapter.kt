@@ -2,17 +2,22 @@ package com.example.satellitex.satellitelist.presentation
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Filterable
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.config.getColorInt
 import com.example.config.setVisibility
 import com.example.satellitex.R
+import android.widget.Filter
 import com.example.satellitex.databinding.RowSatelliteBinding
 import com.example.satellitex.room.Satellite
+import java.util.*
 
 class SatelliteAdapter(private val onItemClickListener: (Satellite) -> Unit) :
-    RecyclerView.Adapter<SatelliteAdapter.SatelliteViewHolder>() {
+    RecyclerView.Adapter<SatelliteAdapter.SatelliteViewHolder>(), Filterable {
+
+    private val allSatelliteList = mutableListOf<Satellite>()
 
     private val differCallback = object : DiffUtil.ItemCallback<Satellite>() {
         override fun areItemsTheSame(oldItem: Satellite, newItem: Satellite) =
@@ -26,6 +31,8 @@ class SatelliteAdapter(private val onItemClickListener: (Satellite) -> Unit) :
 
     fun submitList(list: List<Satellite>) {
         differ.submitList(list)
+        allSatelliteList.clear()
+        allSatelliteList.addAll(list)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SatelliteViewHolder {
@@ -41,12 +48,37 @@ class SatelliteAdapter(private val onItemClickListener: (Satellite) -> Unit) :
     override fun onBindViewHolder(holder: SatelliteViewHolder, position: Int) {
         holder.onBindItem(
             differ.currentList[position],
-            differ.currentList.size - 1 == position,
+            allSatelliteList.size - 1 == position,
             onItemClickListener
         )
     }
 
     override fun getItemCount() = differ.currentList.size
+
+    override fun getFilter(): Filter {
+        return filter
+    }
+
+    private val filter = object : Filter() {
+        override fun performFiltering(charSequence: CharSequence?): FilterResults {
+            val charString = charSequence.toString()
+            val filteredList = mutableListOf<Satellite>()
+            if (charString.isEmpty()) {
+                filteredList.addAll(allSatelliteList)
+            } else {
+                filteredList.addAll(allSatelliteList
+                    .filter { it.name.lowercase(Locale.getDefault()).contains(charString) })
+            }
+            val filterResults = FilterResults()
+            filterResults.values = filteredList
+            return filterResults
+        }
+
+        override fun publishResults(p0: CharSequence?, filterResults: FilterResults?) {
+            differ.submitList(filterResults?.values as List<Satellite>)
+            notifyItemRangeChanged(0, differ.currentList.size)
+        }
+    }
 
     inner class SatelliteViewHolder(private val binding: RowSatelliteBinding) :
         RecyclerView.ViewHolder(binding.root) {
