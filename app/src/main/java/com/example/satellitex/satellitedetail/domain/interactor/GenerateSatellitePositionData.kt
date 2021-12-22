@@ -85,7 +85,5 @@ class GenerateSatellitePositionData @Inject constructor(
 
     private companion object {
         private const val TAG = "LOAD_JSON_POSITION"
-        private const val INITIAL_DELAY = 0L
-        private const val SECOND_INTERVAL = 3L
     }
 }
