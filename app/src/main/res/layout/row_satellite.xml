@@ -12,7 +12,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/image_view_status_contentDesc"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textView_name"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/ic_active" />
@@ -25,6 +27,8 @@
         android:paddingEnd="30dp"
         android:textColor="@color/black"
         android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imageView_status"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Starship-1" />
@@ -37,7 +41,7 @@
         android:paddingEnd="30dp"
         android:textColor="@color/black"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/imageView_status"
+        app:layout_constraintStart_toStartOf="@+id/textView_name"
         app:layout_constraintTop_toBottomOf="@+id/textView_name"
         tools:text="Passive" />
 
