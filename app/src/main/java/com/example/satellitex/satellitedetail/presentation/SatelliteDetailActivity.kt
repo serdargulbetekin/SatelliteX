@@ -46,6 +46,11 @@ class SatelliteDetailActivity : AppCompatActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.onDispose()
+    }
+
     companion object {
         const val EXTRAS_SATELLITE_ID = "EXTRAS_SATELLITE_ID"
         const val EXTRAS_SATELLITE_NAME = "EXTRAS_SATELLITE_NAME"

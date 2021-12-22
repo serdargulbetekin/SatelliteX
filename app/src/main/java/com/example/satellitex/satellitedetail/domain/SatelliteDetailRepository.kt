@@ -4,10 +4,14 @@ import com.example.satellitex.satellitedetail.data.SatelliteDetail
 import com.example.satellitex.satellitedetail.data.SatellitePositionList
 import com.example.satellitex.satellitedetail.domain.interactor.GenerateSatelliteDetailData
 import com.example.satellitex.satellitedetail.domain.interactor.GenerateSatellitePositionData
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.Singles
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class SatelliteDetailRepository @Inject constructor(
@@ -15,18 +19,22 @@ class SatelliteDetailRepository @Inject constructor(
     private val generateSatellitePositionData: GenerateSatellitePositionData,
 ) {
 
-    fun loadData(id: Int): Single<Pair<SatelliteDetail?, SatellitePositionList?>> {
-        return Singles.zip(
+    fun loadData(id: Int): Observable<Pair<SatelliteDetail?, SatellitePositionList>> {
+        return Observable.combineLatest<SatelliteDetail?, SatellitePositionList, Pair<SatelliteDetail?, SatellitePositionList>>(
             generateSatelliteDetailData.getDetailData(id),
-            generateSatellitePositionData.getPositionData(id)
-        ) { detailData, positionData ->
-            detailData to positionData
-        }
+            Observable.interval(
+                INITIAL_DELAY,
+                SECOND_INTERVAL,
+                TimeUnit.SECONDS
+            ).flatMap { generateSatellitePositionData.getPositionData(id) },
+            BiFunction { t1, t2 ->
+                return@BiFunction Pair(t1, t2)
+            })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
-
-    companion object {
-        private const val TAG = "LOAD_JSON_DETAIL_REPO"
+    private companion object {
+        private const val INITIAL_DELAY = 0L
+        private const val SECOND_INTERVAL = 3L
     }
 }

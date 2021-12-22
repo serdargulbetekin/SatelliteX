@@ -2,22 +2,41 @@ package com.example.satellitex.satellitedetail.domain.interactor
 
 import android.content.Context
 import android.util.Log
+import com.example.config.disposeIfNotDisposed
 import com.example.satellitex.room.Satellite
 import com.example.satellitex.satellitedetail.data.SatellitePosition
 import com.example.satellitex.satellitedetail.data.SatellitePositionList
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import org.json.JSONObject
 import java.io.InputStream
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class GenerateSatellitePositionData @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    fun getPositionData(id: Int) =
-        Single.fromCallable { populateData().firstOrNull { it.id == id.toString() } }
 
-    private fun populateData() = generatePositions(loadDPositionsJsonFromFile())
+    private val satellitePositionList = mutableListOf<SatellitePositionList>()
+
+    fun getPositionData(id: Int) =
+        Observable.create<SatellitePositionList> { emitter ->
+            populateData().firstOrNull { it.id == id.toString() }?.let {
+                emitter.onNext(it)
+                Log.d("PositionLog", it.id)
+            }
+        }
+
+    private fun populateData() = if (satellitePositionList.isEmpty()) {
+        generatePositions(loadDPositionsJsonFromFile()).also {
+            satellitePositionList.addAll(it)
+        }
+    } else {
+        satellitePositionList
+    }
 
     private fun loadDPositionsJsonFromFile(): String {
         try {
@@ -43,7 +62,7 @@ class GenerateSatellitePositionData @Inject constructor(
                 val positionArray = listObject.optJSONArray("positions")
                 positionArray?.let { posArray ->
                     for (j in 0 until posArray.length()) {
-                        val posObject = posArray.getJSONObject(i)
+                        val posObject = posArray.getJSONObject(j)
                         positionList.add(
                             SatellitePosition(
                                 posX = posObject.optDouble("posX"),
@@ -66,5 +85,7 @@ class GenerateSatellitePositionData @Inject constructor(
 
     private companion object {
         private const val TAG = "LOAD_JSON_POSITION"
+        private const val INITIAL_DELAY = 0L
+        private const val SECOND_INTERVAL = 3L
     }
 }

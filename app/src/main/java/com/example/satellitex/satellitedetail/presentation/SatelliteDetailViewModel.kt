@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.example.config.StringProvider
+import com.example.config.disposeIfNotDisposed
 import com.example.config.optMessage
 import com.example.constants.Constants
 import com.example.constants.Constants.COMMA
@@ -14,13 +15,13 @@ import com.example.constants.Constants.LEFT_PARENTHESIS
 import com.example.constants.Constants.RIGHT_PARENTHESIS
 import com.example.constants.Constants.SPACE
 import com.example.satellitex.R
-import com.example.satellitex.room.Satellite
-import com.example.satellitex.satellitedetail.data.SatelliteDetail
-import com.example.satellitex.satellitedetail.data.SatellitePositionList
 import com.example.satellitex.satellitedetail.domain.SatelliteDetailRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.Observable
+import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.Disposables
+import java.util.*
 import javax.inject.Inject
+import kotlin.random.Random
 
 @HiltViewModel
 class SatelliteDetailViewModel @Inject constructor(
@@ -63,17 +64,26 @@ class SatelliteDetailViewModel @Inject constructor(
     val errorMessage: LiveData<String>
         get() = _errorMessage
 
+    private var disposable: Disposable? = null
+
     init {
         intentDataSatelliteId?.let { satelliteId ->
             loadUIData(satelliteId)
         } ?: _errorMessage.postValue(stringProvider.getString(R.string.id_not_found))
     }
 
+    fun onDispose(){
+        disposable?.disposeIfNotDisposed()
+    }
+
     @SuppressLint("CheckResult")
     fun loadUIData(satelliteId: Int) {
+        disposable?.dispose()
         _progress.postValue(Constants.PROGRESS_VISIBLE)
-        satelliteDetailRepository.loadData(satelliteId).map {
-            val satellitePosition = it.second?.satellitePosition?.getOrNull(0)
+        disposable = satelliteDetailRepository.loadData(satelliteId).map {
+            val satellitePosition = it.second.satellitePosition
+            val satellitePositionRandom =
+                satellitePosition.getOrNull(Random.nextInt(satellitePosition.size))
             val heightMass =
                 stringProvider.getStringWithArgs(
                     R.string.height_mass,
@@ -84,7 +94,7 @@ class SatelliteDetailViewModel @Inject constructor(
             val lastPosition =
                 stringProvider.getStringWithArgs(
                     R.string.last_position,
-                    LEFT_PARENTHESIS + satellitePosition?.posX.toString() + COMMA + SPACE + satellitePosition?.posY.toString() + RIGHT_PARENTHESIS
+                    LEFT_PARENTHESIS + satellitePositionRandom?.posX.toString() + COMMA + SPACE + satellitePositionRandom?.posY.toString() + RIGHT_PARENTHESIS
                 )
             SatelliteDetailVMItem(it.first?.firstFlight, heightMass, cost, lastPosition)
         }.subscribe({ satelliteDetailVMItem ->

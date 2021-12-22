@@ -3,7 +3,9 @@ package com.example.satellitex.satellitedetail.domain.interactor
 import android.content.Context
 import android.util.Log
 import com.example.satellitex.satellitedetail.data.SatelliteDetail
+import com.example.satellitex.satellitedetail.data.SatellitePositionList
 import dagger.hilt.android.qualifiers.ApplicationContext
+import io.reactivex.Observable
 import io.reactivex.Single
 import org.json.JSONArray
 import java.io.InputStream
@@ -13,9 +15,18 @@ class GenerateSatelliteDetailData @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
 
-    fun getDetailData(id: Int) = Single.fromCallable { populateData().firstOrNull { it.id == id } }
+    private val satelliteDetailList = mutableListOf<SatelliteDetail>()
 
-    private fun populateData() = generateSatelliteList(loadDetailJsonFromFile())
+    fun getDetailData(id: Int) =
+        Observable.fromCallable { populateData().firstOrNull { it.id == id } }
+
+    private fun populateData() = if (satelliteDetailList.isEmpty()) {
+        generateSatelliteList(loadDetailJsonFromFile()).also {
+            satelliteDetailList.addAll(it)
+        }
+    } else {
+        satelliteDetailList
+    }
 
     private fun loadDetailJsonFromFile(): String {
         try {
