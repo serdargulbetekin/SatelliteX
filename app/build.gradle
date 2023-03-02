@@ -6,6 +6,13 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id "org.sonarqube" version "4.0.0.2929"
 }
+
+sonar {
+    properties {
+        property "sonar.projectKey", "SatelliteX"
+    }
+}
+
 android {
     compileSdk 31
 
@@ -34,12 +41,6 @@ android {
     }
     buildFeatures {
         viewBinding true
-    }
-}
-
-sonar {
-    properties {
-        property "sonar.projectKey", "SatelliteX"
     }
 }
 
