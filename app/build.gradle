@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-android-extensions'
     id 'dagger.hilt.android.plugin'
+    id "org.sonarqube" version "3.5.0.2730"
 }
 android {
     compileSdk 31
@@ -33,6 +34,12 @@ android {
     }
     buildFeatures {
         viewBinding true
+    }
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "SatelliteX"
     }
 }
 
